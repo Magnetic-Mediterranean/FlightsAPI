@@ -16,15 +16,23 @@ module.exports = {
       destinationLocationCode,
       departureDate,
       adults,
-      max: '5',
+      max: '4',
       currencyCode: 'USD'
     })
       .then((response) => {
-        res.send(shapeOffers(response.data));
+        shapeOffers(response.data)
+          .then((shaped) => {
+            res.send(shaped);
+          })
+          .catch((err) => {
+            console.log(err);
+            return err;
+          });
       })
       .catch((responseError) => {
         // res.sendStatus(responseError.code);
-        throw responseError;
+        console.log(responseError);
+        return responseError;
       });
   }
 };

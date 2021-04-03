@@ -1,33 +1,46 @@
+const translateAirlineCode = require('./translateAirlineCode.js');
+
 const shapeOffer = (offer) => {
-  const shaped = {
-    airports: []
-  };
+  const code = offer.validatingAirlineCodes[0];
 
-  const { itineraries } = offer;
-  const { segments } = itineraries[0];
-  const { price } = offer;
+  return new Promise((resolve, reject) => {
+    translateAirlineCode(code)
+      .then((translated) => {
+        const shaped = {
+          airports: [],
+          airline: translated
+        };
 
-  shaped.departureTime = segments[0].departure.at;
-  shaped.arrivalTime = segments[segments.length - 1].arrival.at;
+        const { itineraries } = offer;
+        const { segments } = itineraries[0];
+        const { price } = offer;
 
-  const { duration } = itineraries[0];
-  shaped.duration = duration.substring(2);
+        shaped.departureTime = segments[0].departure.at;
+        shaped.arrivalTime = segments[segments.length - 1].arrival.at;
 
-  shaped.numberOfStops = segments.length - 1;
-  shaped.price = price.grandTotal;
+        const { duration } = itineraries[0];
+        shaped.duration = duration.substring(2);
 
-  for (let i = 0; i < segments.length; i += 1) {
-    const segment = segments[i];
-    if (i === segments.length - 1) {
-      shaped.airports.push(segment.departure.iataCode);
-      shaped.airports.push(segment.arrival.iataCode);
-    }
-    else {
-      shaped.airports.push(segment.departure.iataCode);
-    }
-  }
+        shaped.numberOfStops = segments.length - 1;
+        shaped.price = price.grandTotal;
 
-  return shaped;
+        for (let i = 0; i < segments.length; i += 1) {
+          const segment = segments[i];
+          if (i === segments.length - 1) {
+            shaped.airports.push(segment.departure.iataCode);
+            shaped.airports.push(segment.arrival.iataCode);
+          }
+          else {
+            shaped.airports.push(segment.departure.iataCode);
+          }
+        }
+
+        resolve(shaped);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };
 
 const shapeOffers = (offers) => {
@@ -38,7 +51,7 @@ const shapeOffers = (offers) => {
     final.push(shapeOffer(offer));
   }
 
-  return final;
+  return Promise.all(offers.map((offer) => shapeOffer(offer)));
 };
 
 module.exports = shapeOffers;
