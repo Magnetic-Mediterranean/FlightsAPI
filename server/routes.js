@@ -1,11 +1,8 @@
 const router = require('express').Router();
 const { getFlightOffers } = require('./controllers/getFlightOffers.js');
-// const translateAirlineCode = require('./controllers/translateAirlineCode');
+const { getCities } = require('./controllers/getCities.js');
 
 router.get('/flights/offers', getFlightOffers);
-// router.get('/translation', )
-// flight cheapest date search (to, from) => cheapest dates to fly from to
-// flight offers search (date to, date from, to, from) => cheapest flights
-// flight offers price: checks final price for flight (constanly updates)
-// flight inspo: cheapest flights from X (location) => cheapest places to fy from X
+router.get('/flights/translate', getCities);
+
 module.exports = router;

@@ -1,5 +1,5 @@
 const amadeus = require('../init_amadeus.js');
-const shapeOffers = require('./shapeOffers.js');
+const shapeOffers = require('../models/shapeOffers.js');
 // const axios = require('axios');
 
 module.exports = {
@@ -9,14 +9,14 @@ module.exports = {
       destinationLocationCode,
       departureDate,
       adults
-    } = req.body;
+    } = req.query;
 
     amadeus.shopping.flightOffersSearch.get({
       originLocationCode,
       destinationLocationCode,
       departureDate,
       adults,
-      max: '4',
+      max: '40',
       currencyCode: 'USD'
     })
       .then((response) => {
@@ -30,9 +30,7 @@ module.exports = {
           });
       })
       .catch((responseError) => {
-        // res.sendStatus(responseError.code);
-        console.log(responseError);
-        return responseError;
+        res.send(responseError);
       });
   }
 };

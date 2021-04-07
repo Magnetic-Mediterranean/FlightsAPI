@@ -38,20 +38,12 @@ const shapeOffer = (offer) => {
         resolve(shaped);
       })
       .catch((err) => {
+        console.log(err);
         reject(err);
       });
   });
 };
 
-const shapeOffers = (offers) => {
-  const final = [];
-
-  for (let i = 0; i < offers.length; i += 1) {
-    const offer = offers[i];
-    final.push(shapeOffer(offer));
-  }
-
-  return Promise.all(offers.map((offer) => shapeOffer(offer)));
-};
+const shapeOffers = (offers) => Promise.all(offers.map((offer) => shapeOffer(offer)));
 
 module.exports = shapeOffers;
